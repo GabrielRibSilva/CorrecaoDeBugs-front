@@ -4,8 +4,9 @@ import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { FuncionarioService } from '../../services/funcionario.service';
 import { MessageService } from 'primeng/api';
-
-// PrimeNG
+import { Component, OnInit, signal } from '@angular/core';
+import { DepartamentoService } from '../../services/departamento.service';
+import { DepartamentoResponse } from '../../models/departamentoResponse';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { CalendarModule } from 'primeng/calendar';
@@ -18,31 +19,39 @@ import {FuncionarioRequest} from "../../models/funcionarioRequest";
   standalone: true,
   imports: [
     CommonModule, FormsModule, RouterModule,
-    InputTextModule, InputNumberModule, CalendarModule, ButtonModule, ToastModule
+    InputTextModule, InputNumberModule, CalendarModule, ButtonModule, ToastModule, DropdownModule
   ],
   templateUrl: './funcionario-form.component.html',
   styleUrls: ['./funcionario-form.component.css']
 })
-export class FuncionarioFormComponent {
+export class FuncionarioFormComponent implements OnInit {
   id: number | null = null;
   isEdicao = false;
   carregando = this.service.loading;
+  carregandoDeptos = signal(false);
 
   funcionario: FuncionarioRequest = {
-    nome: '',
-    email: '',
-    cargo: '',
-    salario: 0,
-    dataAdmissao: this.hojeISO()
-  };
+      nome: '',
+      email: '',
+      cargo: '',
+      salario: 0,
+      dataAdmissao: this.hojeISO(),
+      departamentoId: 0
+    };
   toDate: Date = new Date();
+
+  departamentos: DepartamentoResponse[] = [];
 
   constructor(
     private service: FuncionarioService,
+    private deptoService: DepartamentoService, // NOVO
     private route: ActivatedRoute,
     private router: Router,
     private msg: MessageService
-  ) {
+  ) {}
+
+ngOnInit(): void {
+    this.carregarDepartamentos();
     const paramId = this.route.snapshot.paramMap.get('id');
     if (paramId) {
       this.isEdicao = true;
@@ -52,36 +61,51 @@ export class FuncionarioFormComponent {
   }
 
   private hojeISO(): string {
-    return new Date().toISOString().substring(0, 10);
+      return new Date().toISOString().substring(0, 10);
   }
 
-  private carregarFuncionario(id: number) {
-    this.service.loading.set(true);
-    this.service.buscarPorId(id).subscribe({
-      next: (f) => {
-        this.funcionario = {
-          nome: f.nome,
-          email: f.email,
-          cargo: f.cargo,
-          salario: f.salario,
-          dataAdmissao: f.dataAdmissao
-        };
-        this.service.loading.set(false);
-      },
-      error: () => {
-        this.msg.add({ severity: 'error', summary: 'Erro', detail: 'Funcionário não encontrado' });
-        this.service.loading.set(false);
-        this.router.navigate(['/funcionarios']);
-      }
-    });
-  }
+  private carregarDepartamentos(): void {
+      this.carregandoDeptos.set(true);
+      this.deptoService.listarAtivos().subscribe({
+        next: (lista) => {
+          this.departamentos = lista;
+          this.carregandoDeptos.set(false);
+        },
+        error: () => {
+          this.msg.add({ severity: 'error', summary: 'Erro', detail: 'Falha ao carregar departamentos' });
+          this.carregandoDeptos.set(false);
+        }
+      });
+    }
 
-  salvar() {
-    if (!this.validarCampos()) return;
+    private carregarFuncionario(id: number): void {
+      this.service.loading.set(true);
+      this.service.buscarPorId(id).subscribe({
+        next: (f) => {
+          this.funcionario = {
+            nome: f.nome,
+            email: f.email,
+            cargo: f.cargo,
+            salario: f.salario,
+            dataAdmissao: f.dataAdmissao,
+            departamentoId: f.departamentoId
+          };
+          this.service.loading.set(false);
+        },
+        error: () => {
+          this.msg.add({ severity: 'error', summary: 'Erro', detail: 'Funcionário não encontrado' });
+          this.service.loading.set(false);
+          this.router.navigate(['/funcionarios']);
+        }
+      });
+    }
 
-    this.service.loading.set(true);
+  salvar(): void {
+      if (!this.validarCampos()) return;
+
+      this.service.loading.set(true);
     if (this.isEdicao && this.id) {
-      this.service.atualizar(this.id, this.funcionario).subscribe({
+           this.service.atualizar(this.id, this.funcionario).subscribe({
         next: () => {
           this.msg.add({ severity: 'success', summary: 'Sucesso', detail: 'Funcionário atualizado' });
           this.service.loading.set(false);
@@ -101,15 +125,16 @@ export class FuncionarioFormComponent {
     }
   }
 
-  limpar() {
-    this.funcionario = {
-      nome: '',
-      email: '',
-      cargo: '',
-      salario: 0,
-      dataAdmissao: this.hojeISO()
-    };
-  }
+  limpar(): void {
+      this.funcionario = {
+        nome: '',
+        email: '',
+        cargo: '',
+        salario: 0,
+        dataAdmissao: this.hojeISO(),
+        departamentoId: 0
+      };
+    }
 
   private validarCampos(): boolean {
     const f = this.funcionario;
@@ -136,6 +161,10 @@ export class FuncionarioFormComponent {
 
     if (!f.dataAdmissao || f.dataAdmissao > this.hojeISO()) {
       this.msg.add({ severity: 'warn', summary: 'Validação', detail: 'Data de admissão inválida' });
+      return false;
+    }
+    if (!f.departamentoId || f.departamentoId <= 0) {
+      this.msg.add({ severity: 'warn', summary: 'Validação', detail: 'Departamento é obrigatório' });
       return false;
     }
 

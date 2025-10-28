@@ -6,4 +6,7 @@ export interface FuncionarioResponse {
   salario: number;
   dataAdmissao: string;
   ativo: boolean;
+  departamentoId: number;
+  departamentoNome: string;
+  departamentoSigla: string;
 }

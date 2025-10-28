@@ -1,0 +1,29 @@
+<p-toast></p-toast>
+
+<h2>{{ isEdicao ? 'Editar Departamento' : 'Novo Departamento' }}</h2>
+
+<div class="form-grid">
+  <div class="form-row">
+    <label for="nome">Nome</label>
+    <input pInputText id="nome" [(ngModel)]="departamento.nome" placeholder="Nome do departamento" />
+  </div>
+
+  <div class="form-row">
+    <label for="sigla">Sigla</label>
+    <input pInputText id="sigla" [(ngModel)]="departamento.sigla" placeholder="Ex.: RH, FIN" />
+  </div>
+
+  <div class="actions">
+    <button pButton label="Salvar" (click)="salvar()" [disabled]="carregando()"></button>
+    <button pButton label="Limpar" class="p-button-secondary" (click)="limpar()" [disabled]="isEdicao || carregando()"></button>
+    <a routerLink="/departamentos">
+      <button pButton label="Voltar" class="p-button-text"></button>
+    </a>
+  </div>
+</div>
+
+<style>
+  .form-grid { display: grid; grid-template-columns: 1fr; gap: 1rem; max-width: 600px; }
+  .form-row { display: grid; gap: .25rem; }
+  .actions { display: flex; gap: 0.5rem; margin-top: 0.5rem; }
+</style>

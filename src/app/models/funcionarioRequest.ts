@@ -4,4 +4,5 @@ export interface FuncionarioRequest {
   cargo: string;
   salario: number;
   dataAdmissao: string; // ISO
+  departamentoId: number;
 }

@@ -3,25 +3,19 @@
 <h2>{{ isEdicao ? 'Editar Funcionário' : 'Novo Funcionário' }}</h2>
 
 <div class="form-grid">
-  <div class="form-row">
-    <label for="nome">Nome</label>
-    <input pInputText id="nome" [(ngModel)]="funcionario.nome" placeholder="Nome completo" />
-  </div>
-
-  <div class="form-row">
-    <label for="email">E-mail</label>
-    <input pInputText id="email" [(ngModel)]="funcionario.email" placeholder="nome@dominio.com" [readonly]="isEdicao" />
-  </div>
-
-  <div class="form-row">
-    <label for="cargo">Cargo</label>
-    <input pInputText id="cargo" [(ngModel)]="funcionario.cargo" placeholder="Ex.: Analista" />
-  </div>
-
-  <div class="form-row">
-    <label for="salario">Salário</label>
-    <p-inputNumber id="salario" mode="currency" currency="BRL" locale="pt-BR"
-                   [(ngModel)]="funcionario.salario"></p-inputNumber>
+  <div class="form-row"> <label for="departamento">Departamento</label>
+    <p-dropdown id="departamento"
+                [options]="departamentos"
+                [(ngModel)]="funcionario.departamentoId"
+                optionLabel="nome"
+                optionValue="id"
+                placeholder="Selecione o departamento"
+                [filter]="true" filterBy="nome"
+                [showClear]="false"
+                [disabled]="carregandoDeptos()"
+                appendTo="body">
+    </p-dropdown>
+    <small *ngIf="carregandoDeptos()">Carregando departamentos...</small>
   </div>
 
   <div class="form-row">
@@ -33,10 +27,5 @@
   </div>
 
   <div class="actions">
-    <button pButton label="Salvar" (click)="salvar()" [disabled]="carregando()"></button>
-    <button pButton label="Limpar" class="p-button-secondary" (click)="limpar()" [disabled]="carregando()"></button>
-    <a routerLink="/funcionarios">
-      <button pButton label="Voltar" class="p-button-text"></button>
-    </a>
   </div>
 </div>
