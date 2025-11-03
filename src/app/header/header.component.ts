@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AuthService } from '../../services/auth.service';
+import { AuthService } from '../services/auth.service';
 import { ButtonModule } from 'primeng/button';
 import { RouterModule } from '@angular/router';
 
