@@ -1,8 +1,10 @@
 import { Routes } from '@angular/router';
+
 import { LoginComponent } from './login/login.component';
 import { AdminComponent } from './layouts/admin/admin.component';
 import { authGuard } from './guards/auth.guard';
 import { unsavedChangesGuard } from './guards/unsaved-changes.guard';
+
 import { FuncionarioListComponent } from "./components/funcionario-list/funcionario-list.component";
 import { FuncionarioFormComponent } from "./components/funcionario-form/funcionario-form.component";
 import { DepartamentoListComponent } from './components/departamento-list/departamento-list.component';
@@ -10,9 +12,7 @@ import { DepartamentoFormComponent } from './components/departamento-form/depart
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
-
   { path: '', redirectTo: 'login', pathMatch: 'full' },
-
   {
     path: '',
     component: AdminComponent,
@@ -29,7 +29,6 @@ export const routes: Routes = [
         component: DepartamentoFormComponent,
         canDeactivate: [unsavedChangesGuard]
       },
-
       { path: 'funcionarios', component: FuncionarioListComponent },
       {
         path: 'funcionarios/novo',
@@ -43,7 +42,5 @@ export const routes: Routes = [
       }
     ]
   },
-
-  // Rota curinga (fallback)
   { path: '**', redirectTo: 'login' }
 ];

@@ -150,7 +150,6 @@ export class FuncionarioFormComponent implements OnInit, CanComponentDeactivate 
       dataAdmissao: this.hojeISO(),
       departamentoId: 0
     };
-
     this.initialFuncionarioJson = JSON.stringify(this.funcionario);
   }
 

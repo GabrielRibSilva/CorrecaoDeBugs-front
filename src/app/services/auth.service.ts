@@ -14,7 +14,6 @@ export class AuthService {
     const mockToken = btoa(email + Date.now());
     localStorage.setItem(this.TOKEN_KEY, mockToken);
     localStorage.setItem(this.EMAIL_KEY, email);
-
     this.router.navigate(['/departamentos']);
   }
 
@@ -27,7 +26,6 @@ export class AuthService {
   isAuthenticated(): boolean {
     return localStorage.getItem(this.TOKEN_KEY) !== null;
   }
-
 
   getUserEmail(): string | null {
     return localStorage.getItem(this.EMAIL_KEY);
