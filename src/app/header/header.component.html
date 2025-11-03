@@ -1,0 +1,15 @@
+<header class="main-header">
+  <div class="logo">
+    Sistema de Gestão
+  </div>
+
+  <nav class="navigation">
+    <a routerLink="/departamentos" routerLinkActive="active-link">Departamentos</a>
+    <a routerLink="/funcionarios" routerLinkActive="active-link">Funcionários</a>
+  </nav>
+
+  <div class="user-info">
+    <span *ngIf="userEmail">{{ userEmail }}</span>
+    <button pButton type="button" label="Sair" icon="pi pi-sign-out" (click)="onLogout()" class="p-button-text p-button-danger"></button>
+  </div>
+</header>

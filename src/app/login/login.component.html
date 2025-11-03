@@ -1,0 +1,20 @@
+<div class="login-container">
+  <h2>Login do Sistema de Gestão</h2>
+  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="email">E-mail</label>
+      <input
+        pInputText
+        id="email"
+        type="email"
+        formControlName="email"
+        placeholder="seu.email@empresa.com"
+      >
+      <div *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched" class="error">
+        E-mail inválido.
+      </div>
+    </div>
+
+    <button pButton type="submit" label="Entrar" [disabled]="loginForm.invalid"></button>
+  </form>
+</div>

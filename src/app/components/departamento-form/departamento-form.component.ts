@@ -10,6 +10,8 @@ import { ButtonModule } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
 
+import { CanComponentDeactivate } from '../../guards/unsaved-changes.guard';
+
 @Component({
   selector: 'app-departamento-form',
   standalone: true,
@@ -20,7 +22,7 @@ import { MessageService } from 'primeng/api';
   providers: [MessageService],
   templateUrl: './departamento-form.component.html',
 })
-export class DepartamentoFormComponent implements OnInit {
+export class DepartamentoFormComponent implements OnInit, CanComponentDeactivate {
   id: number | null = null;
   isEdicao = false;
   carregando = this.service.loading;
@@ -29,6 +31,8 @@ export class DepartamentoFormComponent implements OnInit {
     nome: '',
     sigla: ''
   };
+
+  private initialDepartamentoJson: string = '';
 
   constructor(
     private service: DepartamentoService,
@@ -43,7 +47,16 @@ export class DepartamentoFormComponent implements OnInit {
       this.isEdicao = true;
       this.id = Number(paramId);
       this.carregarDepartamento(this.id);
+    } else {
+      this.initialDepartamentoJson = JSON.stringify(this.departamento);
     }
+  }
+
+  canDeactivate(): boolean {
+    if (JSON.stringify(this.departamento) !== this.initialDepartamentoJson) {
+      return false;
+    }
+    return true;
   }
 
   private carregarDepartamento(id: number): void {
@@ -51,6 +64,7 @@ export class DepartamentoFormComponent implements OnInit {
     this.service.buscarPorId(id).subscribe({
       next: (d) => {
         this.departamento = { nome: d.nome, sigla: d.sigla };
+        this.initialDepartamentoJson = JSON.stringify(this.departamento);
         this.carregando.set(false);
       },
       error: (err) => {
@@ -76,6 +90,9 @@ export class DepartamentoFormComponent implements OnInit {
       next: () => {
         const detail = this.isEdicao ? 'Departamento atualizado' : 'Departamento cadastrado';
         this.msg.add({ severity: 'success', summary: 'Sucesso', detail: detail });
+
+        this.initialDepartamentoJson = JSON.stringify(this.departamento);
+
         this.carregando.set(false);
         setTimeout(() => this.router.navigate(['/departamentos']), 1000);
       },
@@ -85,6 +102,7 @@ export class DepartamentoFormComponent implements OnInit {
 
   limpar(): void {
     this.departamento = { nome: '', sigla: '' };
+    this.initialDepartamentoJson = JSON.stringify(this.departamento);
   }
 
   private validarCampos(): boolean {

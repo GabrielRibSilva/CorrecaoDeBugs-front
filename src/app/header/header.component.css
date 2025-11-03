@@ -1,0 +1,36 @@
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1.5rem;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+  height: 60px;
+}
+.logo {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+.navigation {
+  display: flex;
+  gap: 1rem;
+}
+.navigation a {
+  text-decoration: none;
+  color: #495057;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  transition: background-color 0.2s;
+}
+.navigation a:hover {
+  background-color: #e9ecef;
+}
+.navigation a.active-link {
+  color: #007bff;
+  font-weight: 500;
+}
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
